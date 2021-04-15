@@ -1,4 +1,4 @@
-dbConnect
+dbConnect*.js
 node_modules
 package-lock.json
 *.txt
