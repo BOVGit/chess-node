@@ -1,0 +1,183 @@
+<!-- v1.1.4  2021-04-02 -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Player ratings</title>
+  <link id="favicon" rel="icon" type="image/png" href="favicon.png" />
+  <link rel="stylesheet" href="css/chess.css">
+  <link href="https://fonts.googleapis.com/css?family=Rock+Salt" rel="stylesheet" type="text/css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+  <div id="bodyStyle" class="PCStyle">
+
+    <header>
+      <div class="oneLineUser">
+        <input type="button" value="User" name="buttonUser" id="buttonUser" title="User">
+        <span class="currentUsername"></span>
+      </div>
+
+      <div class="projectName projectNameDifPC">Player ratings</div>
+    </header>
+
+    <main>
+
+      <form>
+        <label id="InputOrder1" class="oneLine" for="elemTextLichessOrgPlayerNames">
+          <input class="inputCheck" type="checkbox" id="elemCheckLichess" name="elemCheckLichess" checked>
+          <input class="buttonRefresh" type="button" value="↺" id="buttonLichessRefresh" title="Refresh Lichess table">
+          <input class="inputText" type="text" id="elemTextLichessOrgPlayerNames" name="elemTextLichessOrgPlayerNames"
+            maxlength="250" title="Enter names of players on Lichess.org, separated by spaces"
+            placeholder="Player names on Lichess, separated by spaces">
+        </label>
+        <label id="InputOrder2" class="oneLine" for="elemTextChessComPlayerNames">
+          <input class="inputCheck" type="checkbox" id="elemCheckChessCom" name="elemCheckChessCom" checked>
+          <input class="buttonRefresh" type="button" value="↺" id="buttonChessComRefresh"
+            title="Refresh Chess.com table">
+          <input class="inputText" type="text" id="elemTextChessComPlayerNames" name="elemTextChessComPlayerNames"
+            maxlength="250" title="Enter names of players on Chess.com, separated by spaces"
+            placeholder="Player names on Chess.com, separated by spaces">
+        </label>
+      </form>
+
+      <div id="TableOrder1" class="TableLichess showBlock">
+        <table>
+          <thead class="THeadLichess">
+            <tr>
+              <th class="THeadPlayerLichess leftTopOfTable">Lichess</th>
+              <th class="THeadbulletLichess">bullet</th>
+              <th class="THeadblitzLichess">blitz</th>
+              <th class="THeadrapidLichess">rapid</th>
+              <th class="THeadpuzzleLichess">puzzle</th>
+              <th class="THeadrushLichess">storm</th>
+            </tr>
+          </thead>
+          <tbody class="TBodyLichess">
+          </tbody>
+        </table>
+      </div>
+
+      <div id="TableOrder2" class="TableChessCom showBlock">
+        <table>
+          <thead class="THeadChessCom">
+            <tr>
+              <th class="THeadPlayerChessCom leftTopOfTable">Chess.com</th>
+              <th class="THeadbulletChessCom">bullet</th>
+              <th class="THeadblitzChessCom">blitz</th>
+              <th class="THeadrapidChessCom">rapid</th>
+              <th class="THeadpuzzleChessCom">puzzle</th>
+              <th class="THeadrushChessCom">rush</th>
+            </tr>
+          </thead>
+          <tbody class="TBodyChessCom">
+          </tbody>
+        </table>
+      </div>
+
+      <section class="sectionSettingsButtons">
+        <br>
+        <input class="buttonSettings" type="button" value="⚙ Settings" id="buttonSettings" title="Settings">
+        <input class="buttonChangeTables" type="button" value="↑↓" id="buttonChangeTables" title="Change tables order">
+      </section>
+
+    </main>
+
+    <section class="sectionSettingsArea hiddenBlock">
+      <form>
+        <fieldset>
+          <legend><em><strong>Settings</strong></em></legend>
+          <label for="elemAutoRefreshInterval">
+            AutoRefresh Interval in minutes (0 - not AutoRefresh):
+            <input type="text" size="10" id="elemAutoRefreshInterval" name="elemAutoRefreshInterval"
+              title="Enter AutoRefresh Interval in minutes">
+          </label>
+          <p>
+            <label for="elemCheckDarkTheme">
+              <input class="inputCheckSettings" type="checkbox" id="elemCheckDarkTheme" name="elemCheckDarkTheme">
+              Dark theme
+            </label>
+          </p>
+        </fieldset>
+
+        <p>
+          <input class="buttonClearSettings" type="button" value="Clear all settings and player names"
+            id="buttonClearSettings" title="Clear all settings and player names">
+        </p>
+
+        <fieldset>
+          <legend><em><strong>Tips</strong></em></legend>
+          <ul>
+            <li><span class="click">Click</span> on the <span class="dotted">text "Player ratings on chess sites"</span>
+              to refresh all tables
+            </li>
+            <li><span class="click">Click</span> on the <span class="dotted">heading "Lichess"</span> to refresh the
+              Lichess table and sort by player list</li>
+            <li><span class="click">Click</span> on the <span class="dotted">heading "Chess.com"</span> to refresh the
+              Chess.com table and sort by player list</li>
+            <li><span class="click">Click</span> on <span class="dotted">any other heading</span> to sort by rating</li>
+            <li><span class="click">Click</span> on the <span class="dotted">"↑↓" button</span> to change the order of
+              tables</li>
+            <li>
+              if you see the <span class="dotted">check mark "✔" </span> before a player's name, it means that this
+              <span class="dotted">player is online</span>
+            </li>
+            <li><span class="click">Click</span> on <span class="dotted">User button and then
+                Registration/Github/Google</span> to
+              save the player names and other settings to the server. These settings will be available for all your
+              devices!
+            </li>
+          </ul>
+        </fieldset>
+      </form>
+      <br>
+      <input class="buttonSettings" type="button" value="Go to main page" id="buttonReturnToMainFromSettings"
+        title="Return to main page">
+    </section>
+
+    <section class="sectionLoginArea hiddenBlock">
+      <form action="/login" name="loginForm" method="post">
+        <fieldset>
+          <legend class="legend">User</legend>
+          <div class="inputTextLogin">
+            <label>Username:</label>
+            <input type="text" name="username" id="username" maxlength="40" placeholder="username" required>
+            <br>
+          </div>
+          <div class="inputTextLogin">
+            <label>Password:</label>
+            <input type="password" name="password" id="password" maxlength="40" placeholder="password" required>
+          </div>
+          <div class="inputTextLogin"> <input type="button" value="Log in" id="buttonPostLogin"> </div>
+          <div class="inputTextLogin"> <input type="button" value="Log out" id="buttonPostLogout"> </div>
+          <div class="inputTextLogin"> <input type="button" value="Registration" id="buttonPostRegistration"> </div>
+          <a class="referToGithub" href=auth/github>Log in with Github</a>
+          <br>
+          <a class="referToGoogle" href=auth/google>Log in with Google</a>
+          <br>
+          <label class="okMessage" id="okMessage"></label>
+          <br>
+          <label class="errorMessage" id="errorMessage"></label>
+        </fieldset>
+      </form>
+      <br>
+      <input class="buttonSettings" type="button" value="Go to main page" id="buttonReturnToMainFromUser"
+        title="Return to main page">
+    </section>
+
+    <footer>
+      bovgit © 2021
+      <a href="mailto:bovgit@gmail.com?subject=Player ratings on chess sites">(e-mail)</a>
+    </footer>
+
+  </div>
+
+  <noscript><em>You need to enable JavaScript to run this app !!!</em></noscript>
+
+  <script src="js/chess.js"></script>
+
+</body>
+
+</html>
