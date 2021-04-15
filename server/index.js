@@ -42,7 +42,15 @@ app.use(passport.session());
 const mongoose = require('mongoose');
 const passportLocalMongoose = require('passport-local-mongoose');
 
-const dbConnectString = require('./config/dbConnect').mongoURI;
+// const dbConnectString = require('./config/dbConnect').mongoURI;
+const dbConnectString = process.env.MongoDBConnectString;
+console.log(`dbConnectString = ${dbConnectString}`);
+if (dbConnectString === undefined) {
+  console.log('It is not defined environment variable "dbConnectString" !');
+} else if (!dbConnectString.trim()) {
+  console.log('Environment variable "dbConnectString" is empty !');
+}
+
 mongoose.connect(dbConnectString,
   { useNewUrlParser: true, useUnifiedTopology: true });
 
