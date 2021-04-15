@@ -1,4 +1,4 @@
-//v1.1.4 2021-04-15
+//v1.1.5 2021-04-15
 'use strict';
 
 let urlHttpServiceLichess = 'https://lichess.org/api/user/';
