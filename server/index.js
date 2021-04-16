@@ -1,4 +1,4 @@
-//v1.1.4 2021-04-11
+//v1.1.5 2021-04-16
 
 //===============================================================================================
 
@@ -374,6 +374,18 @@ app.post('/isUserLoggedAJAX',
 app.get('/',
   (req, res) => { res.sendFile('html/index.html', { root: rootDir }) }
 );
+
+//===============================================================================================
+
+//by every 23 minutes wake-up (else heroku's state changed from up to down!)
+
+const milliSeconds = 23 * 60 * 1000;
+// const milliSeconds = 5 * 1000;
+let intervalID = setInterval(wakeUp, milliSeconds);
+
+function wakeUp() {
+  console.log('Wake up at ' + new Date());
+}
 
 //===============================================================================================
 
