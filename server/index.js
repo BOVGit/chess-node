@@ -1,5 +1,7 @@
 //v1.1.7 2021-05-02
 
+const port = process.env.PORT || 3000;
+
 //===============================================================================================
 
 /*  EXPRESS SETUP  */
@@ -23,7 +25,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressSession);
 
-const port = process.env.PORT || 3000;
 app.listen(port, () => console.log('App listening on port ' + port));
 
 //===============================================================================================
@@ -108,13 +109,14 @@ passport.deserializeUser(function (obj, cb) {
 
 const GitHubStrategy = require('passport-github').Strategy;
 
-//from Github
-const GITHUB_CLIENT_ID = 'Iv1.45f7cf63babb81e4';
-const GITHUB_CLIENT_SECRET = 'ec66574af16042f197cc952f8188c0687e0e6585';
+let clientID_Github = process.env.chessNode_clientID_Github;
+checkVar(clientID_Github, 'chessNode_clientID_Github');
+let clientSecret_Github = process.env.chessNode_clientSecret_Github;
+checkVar(clientSecret_Github, 'chessNode_clientSecret_Github');
 
 passport.use(new GitHubStrategy({
-  clientID: GITHUB_CLIENT_ID,
-  clientSecret: GITHUB_CLIENT_SECRET,
+  clientID: clientID_Github,
+  clientSecret: clientSecret_Github,
   callbackURL: '/auth/github/callback'
 },
   function (accessToken, refreshToken, profile, cb) {
@@ -145,13 +147,14 @@ app.get('/auth/github/callback',
 
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
-//from Google-OAuth2
-const GOOGLE_CLIENT_ID = '727821675635-1ae7t5fqtr2k1fq0993hjpg0jo0e8tq6';
-const GOOGLE_CLIENT_SECRET = 'bpMWr7OZY6wEbLVQb0f4MjY5';
+let clientID_Google = process.env.chessNode_clientID_Google;
+checkVar(clientID_Google, 'chessNode_clientID_Google');
+let clientSecret_Google = process.env.chessNode_clientSecret_Google;
+checkVar(clientSecret_Google, 'chessNode_clientSecret_Google');
 
 passport.use(new GoogleStrategy({
-  clientID: GOOGLE_CLIENT_ID,
-  clientSecret: GOOGLE_CLIENT_SECRET,
+  clientID: clientID_Google,
+  clientSecret: clientSecret_Google,
   callbackURL: '/auth/google/callback'
 },
   function (accessToken, refreshToken, profile, cb) {
@@ -184,6 +187,45 @@ app.get('/auth/google/callback',
 
 //===============================================================================================
 
+//Registration by Lichess: https://github.com/lichess-org/api/blob/master/example/oauth-authorization-code/index.js
+
+// const oauth = require('simple-oauth2');
+// // const fetch = require('node-fetch');
+
+// function goOAuthLichess() {
+//   let clientID_Lichess1 = process.env.chessNode_clientID_Lichess;
+//   checkVar(clientID_Lichess1, 'chessNode_clientID_Lichess');
+//   let clientSecret_Lichess1 = process.env.chessNode_clientSecret_Lichess;
+//   checkVar(clientSecret_Lichess1, 'chessNode_clientSecret_Lichess');
+//   let chessNode_redirectUri = process.env.chessNode_redirectUri;
+//   checkVar(chessNode_redirectUri, 'chessNode_redirectUri');
+
+//   const client = new oauth.AuthorizationCode({
+//     client: {
+//       id: clientID_Lichess1,
+//       secret: clientSecret_Lichess1
+//     },
+//     auth: {
+//       tokenHost: 'https://oauth.lichess.org',
+//       authorizePath: '/oauth/authorize',
+//       tokenPath: '/oauth'
+//     },
+//     http: {
+//       json: true
+//     }
+//   });
+//   const redirectUri = chessNode_redirectUri;
+//   const authorizationUri = client.authorizeURL({
+//     redirect_uri: redirectUri,
+//     scope: ['preference:read'], // see https://lichess.org/api#section/Introduction/Rate-limiting
+//     state: Math.random().toString(36).substring(2)
+//   });
+
+//   app.get('/auth', (_, res) => res.redirect(authorizationUri));
+// }
+
+//===============================================================================================
+
 /*  PASSPORT-LICHESS AUTHENTICATION  */
 
 passport.serializeUser(function (user, cb) {
@@ -196,10 +238,9 @@ passport.deserializeUser(function (obj, cb) {
 
 const LichessStrategy = require('passport-lichess').Strategy;
 
-let clientID_Lichess, clientSecret_Lichess;
-clientID_Lichess = process.env.chessNode_clientID_Lichess;
+let clientID_Lichess = process.env.chessNode_clientID_Lichess;
 checkVar(clientID_Lichess, 'chessNode_clientID_Lichess');
-clientSecret_Lichess = process.env.chessNode_clientSecret_Lichess;
+let clientSecret_Lichess = process.env.chessNode_clientSecret_Lichess;
 checkVar(clientSecret_Lichess, 'chessNode_clientSecret_Lichess');
 
 passport.use(new LichessStrategy({
@@ -209,13 +250,13 @@ passport.use(new LichessStrategy({
 },
   function (accessToken, refreshToken, profile, cb) {
     return cb(null, profile);
-    // User.findOrCreate({ lichessId: profile.id }, function (err, user) {
-    //   return cb(err, user);
   }
 ));
 
 app.get('/auth/lichess',
-  passport.authenticate('lichess'));
+  passport.authenticate('lichess')
+  // goOAuthLichess()
+);
 
 app.get('/auth/lichess/callback',
   passport.authenticate('lichess', { failureRedirect: '/errorMsgAfterLogin=Error after Lichess login !' }),
