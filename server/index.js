@@ -196,21 +196,15 @@ passport.deserializeUser(function (obj, cb) {
 
 const LichessStrategy = require('passport-lichess').Strategy;
 
-//BOVLichessAppLocal:
-// const LICHESS_CLIENT_ID = 'Y3QCYxTU2PduhgGw';
-// const LICHESS_CLIENT_SECRET = '4b5Vm7MS1agzSsuv2gBwAGE7sGlUPh0P';
-
-//BOVLichessAppGlitch:
-// const LICHESS_CLIENT_ID = 'yLGGu8y7DlLYJnbT';
-// const LICHESS_CLIENT_SECRET = 'NK7W9IsCi99xBkUbJhi7CD6nAEiL9UBq';
-
-//BOVLichessAppHeroku:
-const LICHESS_CLIENT_ID = 'tLZgJi7QYxpHLscz';
-const LICHESS_CLIENT_SECRET = 'JgmiL8LU8y1LdNMLlEbpLPeX9iSwHRVI';
+let clientID_Lichess, clientSecret_Lichess;
+clientID_Lichess = process.env.chessNode_clientID_Lichess;
+checkVar(clientID_Lichess, 'chessNode_clientID_Lichess');
+clientSecret_Lichess = process.env.chessNode_clientSecret_Lichess;
+checkVar(clientSecret_Lichess, 'chessNode_clientSecret_Lichess');
 
 passport.use(new LichessStrategy({
-  clientID: LICHESS_CLIENT_ID,
-  clientSecret: LICHESS_CLIENT_SECRET,
+  clientID: clientID_Lichess,
+  clientSecret: clientSecret_Lichess,
   callbackURL: '/auth/lichess/callback'
 },
   function (accessToken, refreshToken, profile, cb) {
@@ -549,4 +543,12 @@ function isMobileDevice(userAgent) {
     + 'blackberry|playstation portable|tablet browser|webOS|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk';
   const devices = new RegExp(s, "i");
   return devices.test(userAgent) ? true : false;
+}
+
+function checkVar(v, vname) {
+  if (v === undefined) {
+    console.log(`It is not defined environment variable "${vname}" !`);
+  } else if (!v.trim()) {
+    console.log(`Environment variable "${vname}" is empty !`);
+  }
 }
