@@ -1201,8 +1201,8 @@ function goUserMode() {
 
   let regtypeLocal = localStorage.getItem('regtype');
   regtypeLocal = regtypeLocal ? regtypeLocal : '';
-  if (regtype === 'github' || regtype === 'google'
-    || regtypeLocal === 'github' || regtypeLocal === 'google') {
+  if (regtype === 'github' || regtype === 'google' || regtype === 'lichess'
+    || regtypeLocal === 'github' || regtypeLocal === 'google' || regtypeLocal === 'lichess') {
     document.getElementById('username').value = '';
     document.getElementById('password').value = '';
   } else {
@@ -1218,6 +1218,7 @@ function goUserMode() {
     setElementNonVisible('#buttonPostRegistration');
     setElementNonVisible('.referToGithub');
     setElementNonVisible('.referToGoogle');
+    setElementNonVisible('.referToLichess');
   } else {
     document.getElementById('username').removeAttribute("disabled");
     document.getElementById('password').removeAttribute("disabled");
@@ -1226,6 +1227,7 @@ function goUserMode() {
     setElementVisible('#buttonPostRegistration');
     setElementVisible('.referToGithub');
     setElementVisible('.referToGoogle');
+    setElementVisible('.referToLichess');
   }
 }
 

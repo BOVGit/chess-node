@@ -1,4 +1,4 @@
-//v1.1.6 2021-04-16
+//v1.1.7 2021-05-02
 
 //===============================================================================================
 
@@ -178,6 +178,57 @@ app.get('/auth/google/callback',
     const regtypeLocal = 'google';
     //fill userVisit for current user: set ipAddress, userAgent, ...
     objUserVisit_create(req, usernameLocal, regtypeLocal, visitDateLocal);
+    //fill userInfo for current user: set lastVisitDate and ++visitCount
+    objUserInfo_redirectAfterLogin(res, usernameLocal, regtypeLocal, visitDateLocal);
+  });
+
+//===============================================================================================
+
+/*  PASSPORT-LICHESS AUTHENTICATION  */
+
+passport.serializeUser(function (user, cb) {
+  cb(null, user);
+});
+
+passport.deserializeUser(function (obj, cb) {
+  cb(null, obj);
+});
+
+const LichessStrategy = require('passport-lichess').Strategy;
+
+//BOVLichessAppLocal:
+// const LICHESS_CLIENT_ID = 'Y3QCYxTU2PduhgGw';
+// const LICHESS_CLIENT_SECRET = '4b5Vm7MS1agzSsuv2gBwAGE7sGlUPh0P';
+
+//BOVLichessAppGlitch:
+const LICHESS_CLIENT_ID = 'yLGGu8y7DlLYJnbT';
+const LICHESS_CLIENT_SECRET = 'NK7W9IsCi99xBkUbJhi7CD6nAEiL9UBq';
+
+passport.use(new LichessStrategy({
+  clientID: LICHESS_CLIENT_ID,
+  clientSecret: LICHESS_CLIENT_SECRET,
+  callbackURL: '/auth/lichess/callback'
+},
+  function (accessToken, refreshToken, profile, cb) {
+    return cb(null, profile);
+    // User.findOrCreate({ lichessId: profile.id }, function (err, user) {
+    //   return cb(err, user);
+  }
+));
+
+app.get('/auth/lichess',
+  passport.authenticate('lichess'));
+
+app.get('/auth/lichess/callback',
+  passport.authenticate('lichess', { failureRedirect: '/errorMsgAfterLogin=Error after Lichess login !' }),
+  function (req, res) {
+    //fill userVisit for current user: set ipAddress, userAgent, ...
+    const usernameLocal = req.user.username.trim() + '@lichess.org';
+    console.log(`${new Date()} \n/auth/lichess/callback lichess username: ${usernameLocal}`);
+    const visitDateLocal = new Date();
+    const regtypeLocal = 'lichess';
+    objUserVisit_create(req, usernameLocal, regtypeLocal, visitDateLocal);
+
     //fill userInfo for current user: set lastVisitDate and ++visitCount
     objUserInfo_redirectAfterLogin(res, usernameLocal, regtypeLocal, visitDateLocal);
   });
