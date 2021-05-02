@@ -201,8 +201,12 @@ const LichessStrategy = require('passport-lichess').Strategy;
 // const LICHESS_CLIENT_SECRET = '4b5Vm7MS1agzSsuv2gBwAGE7sGlUPh0P';
 
 //BOVLichessAppGlitch:
-const LICHESS_CLIENT_ID = 'yLGGu8y7DlLYJnbT';
-const LICHESS_CLIENT_SECRET = 'NK7W9IsCi99xBkUbJhi7CD6nAEiL9UBq';
+// const LICHESS_CLIENT_ID = 'yLGGu8y7DlLYJnbT';
+// const LICHESS_CLIENT_SECRET = 'NK7W9IsCi99xBkUbJhi7CD6nAEiL9UBq';
+
+//BOVLichessAppHeroku:
+const LICHESS_CLIENT_ID = 'tLZgJi7QYxpHLscz';
+const LICHESS_CLIENT_SECRET = 'JgmiL8LU8y1LdNMLlEbpLPeX9iSwHRVI';
 
 passport.use(new LichessStrategy({
   clientID: LICHESS_CLIENT_ID,
