@@ -1,5 +1,7 @@
 //v1.1.7 2021-05-02
 
+'use strict';
+
 const port = process.env.PORT || 3000;
 
 //===============================================================================================
@@ -189,59 +191,58 @@ app.get('/auth/google/callback',
 
 //Registration by Lichess: https://github.com/lichess-org/api/blob/master/example/oauth-authorization-code/index.js
 
-// const oauth = require('simple-oauth2');
-// // const fetch = require('node-fetch');
+const oauth = require('simple-oauth2');
+const fetch = require('node-fetch');
 
 // function goOAuthLichess() {
-//   let clientID_Lichess1 = process.env.chessNode_clientID_Lichess;
-//   checkVar(clientID_Lichess1, 'chessNode_clientID_Lichess');
-//   let clientSecret_Lichess1 = process.env.chessNode_clientSecret_Lichess;
-//   checkVar(clientSecret_Lichess1, 'chessNode_clientSecret_Lichess');
-//   let chessNode_redirectUri = process.env.chessNode_redirectUri;
-//   checkVar(chessNode_redirectUri, 'chessNode_redirectUri');
+let clientID_Lichess = process.env.chessNode_clientID_Lichess;
+checkVar(clientID_Lichess, 'chessNode_clientID_Lichess');
+let clientSecret_Lichess = process.env.chessNode_clientSecret_Lichess;
+checkVar(clientSecret_Lichess, 'chessNode_clientSecret_Lichess');
+let chessNode_redirectUri = process.env.chessNode_redirectUri;
+checkVar(chessNode_redirectUri, 'chessNode_redirectUri');
 
-//   const client = new oauth.AuthorizationCode({
-//     client: {
-//       id: clientID_Lichess1,
-//       secret: clientSecret_Lichess1
-//     },
-//     auth: {
-//       tokenHost: 'https://oauth.lichess.org',
-//       authorizePath: '/oauth/authorize',
-//       tokenPath: '/oauth'
-//     },
-//     http: {
-//       json: true
-//     }
-//   });
-//   const redirectUri = chessNode_redirectUri;
-//   const authorizationUri = client.authorizeURL({
-//     redirect_uri: redirectUri,
-//     scope: ['preference:read'], // see https://lichess.org/api#section/Introduction/Rate-limiting
-//     state: Math.random().toString(36).substring(2)
-//   });
+const client = new oauth.AuthorizationCode({
+  client: {
+    id: clientID_Lichess,
+    secret: clientSecret_Lichess
+  },
+  auth: {
+    tokenHost: 'https://oauth.lichess.org',
+    authorizePath: '/oauth/authorize',
+    tokenPath: '/oauth'
+  },
+  http: {
+    json: true
+  }
+});
+const redirectUri = chessNode_redirectUri;
+const authorizationUri = client.authorizeURL({
+  redirect_uri: redirectUri,
+  scope: ['preference:read'], // see https://lichess.org/api#section/Introduction/Rate-limiting
+  state: Math.random().toString(36).substring(2)
+});
 
-//   app.get('/auth', (_, res) => res.redirect(authorizationUri));
 // }
 
 //===============================================================================================
 
 /*  PASSPORT-LICHESS AUTHENTICATION  */
 
-passport.serializeUser(function (user, cb) {
-  cb(null, user);
-});
+// passport.serializeUser(function (user, cb) {
+//   cb(null, user);
+// });
 
-passport.deserializeUser(function (obj, cb) {
-  cb(null, obj);
-});
+// passport.deserializeUser(function (obj, cb) {
+//   cb(null, obj);
+// });
 
 const LichessStrategy = require('passport-lichess').Strategy;
 
-let clientID_Lichess = process.env.chessNode_clientID_Lichess;
-checkVar(clientID_Lichess, 'chessNode_clientID_Lichess');
-let clientSecret_Lichess = process.env.chessNode_clientSecret_Lichess;
-checkVar(clientSecret_Lichess, 'chessNode_clientSecret_Lichess');
+// let clientID_Lichess = process.env.chessNode_clientID_Lichess;
+// checkVar(clientID_Lichess, 'chessNode_clientID_Lichess');
+// let clientSecret_Lichess = process.env.chessNode_clientSecret_Lichess;
+// checkVar(clientSecret_Lichess, 'chessNode_clientSecret_Lichess');
 
 passport.use(new LichessStrategy({
   clientID: clientID_Lichess,
@@ -253,24 +254,51 @@ passport.use(new LichessStrategy({
   }
 ));
 
-app.get('/auth/lichess',
-  passport.authenticate('lichess')
-  // goOAuthLichess()
-);
+// app.get('/auth/lichess',
+//   passport.authenticate('lichess')
+//   // goOAuthLichess()
+// );
 
-app.get('/auth/lichess/callback',
-  passport.authenticate('lichess', { failureRedirect: '/errorMsgAfterLogin=Error after Lichess login !' }),
-  function (req, res) {
-    //fill userVisit for current user: set ipAddress, userAgent, ...
-    const usernameLocal = req.user.username.trim() + '@lichess.org';
-    console.log(`${new Date()} \n/auth/lichess/callback lichess username: ${usernameLocal}`);
-    const visitDateLocal = new Date();
-    const regtypeLocal = 'lichess';
-    objUserVisit_create(req, usernameLocal, regtypeLocal, visitDateLocal);
+// app.get('/auth/lichess/callback',
+//   passport.authenticate('lichess', { failureRedirect: '/errorMsgAfterLogin=Error after Lichess login !' }),
+//   function (req, res) {
+//     //fill userVisit for current user: set ipAddress, userAgent, ...
+//     const usernameLocal = req.user.username.trim() + '@lichess.org';
+//     console.log(`${new Date()} \n/auth/lichess/callback lichess username: ${usernameLocal}`);
+//     const visitDateLocal = new Date();
+//     const regtypeLocal = 'lichess';
+//     objUserVisit_create(req, usernameLocal, regtypeLocal, visitDateLocal);
 
-    //fill userInfo for current user: set lastVisitDate and ++visitCount
-    objUserInfo_redirectAfterLogin(res, usernameLocal, regtypeLocal, visitDateLocal);
+//     //fill userInfo for current user: set lastVisitDate and ++visitCount
+//     objUserInfo_redirectAfterLogin(res, usernameLocal, regtypeLocal, visitDateLocal);
+//   });
+
+app.get('/auth/lichess', (_, res) => res.redirect(authorizationUri));
+
+app.get('/auth/lichess/callback', async (req, res) => {
+  console.log(`---------------------- /auth/lichess/callback ${new Date()}`);
+  const token = await client.getToken({
+    code: req.query.code,
+    redirect_uri: redirectUri
   });
+  const user = await fetch('https://lichess.org/api/account', {
+    headers: {
+      'Authorization': `Bearer ${token.token.access_token}`
+    }
+  }).then(res => res.json());
+  // res.send(`<h1>Success!</h1>Your lichess user info: <pre>${JSON.stringify(user)}</pre>`);
+
+  //fill userVisit for current user: set ipAddress, userAgent, ...
+  const usernameLocal = user.username.trim() + '@lichess.org';
+  console.log(`${new Date()} \n/auth/lichess/callback lichess username: ${usernameLocal}`);
+  const visitDateLocal = new Date();
+  const regtypeLocal = 'lichess';
+  objUserVisit_create(req, usernameLocal, regtypeLocal, visitDateLocal);
+
+  //fill userInfo for current user: set lastVisitDate and ++visitCount
+  objUserInfo_redirectAfterLogin(res, usernameLocal, regtypeLocal, visitDateLocal);
+
+});
 
 //===============================================================================================
 
