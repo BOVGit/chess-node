@@ -1306,12 +1306,18 @@ function getDataFromStorage() {
 }
 
 function setDataToStorage() {
-  let v = document.getElementById('elemTextLichessOrgPlayerNames').value;
-  let isDiff = (v.trim() !== localStorage.getItem('LichessOrgPlayerNames').trim());
+  let v, isDiff, vs;
+
+  v = document.getElementById('elemTextLichessOrgPlayerNames').value;
+  vs = localStorage.getItem('LichessOrgPlayerNames');
+  vs = (vs === null ? "" : vs);
+  isDiff = (v.trim() !== vs.trim());
   localStorage.setItem('LichessOrgPlayerNames', v);
 
   v = document.getElementById('elemTextChessComPlayerNames').value;
-  isDiff = isDiff || (v.trim() !== localStorage.getItem('ChessComPlayerNames').trim());
+  vs = localStorage.getItem('ChessComPlayerNames');
+  vs = (vs === null ? "" : vs);
+  isDiff = isDiff || (v.trim() !== vs.trim());
   localStorage.setItem('ChessComPlayerNames', v);
 
   v = document.getElementById('elemCheckLichess').checked ? '1' : '0';
